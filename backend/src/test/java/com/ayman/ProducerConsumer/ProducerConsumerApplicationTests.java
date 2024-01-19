@@ -1,4 +1,4 @@
-package com.example.ProducerConsumer;
+package com.ayman.ProducerConsumer;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

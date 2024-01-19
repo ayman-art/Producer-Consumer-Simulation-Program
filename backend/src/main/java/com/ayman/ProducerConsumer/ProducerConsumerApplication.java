@@ -1,4 +1,4 @@
-package com.example.ProducerConsumer;
+package com.ayman.ProducerConsumer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,6 +1,6 @@
-package controllers;
+package com.ayman.ProducerConsumer.controllers;
 
-import models.SnapShot;
+import com.ayman.ProducerConsumer.models.SnapShot;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;

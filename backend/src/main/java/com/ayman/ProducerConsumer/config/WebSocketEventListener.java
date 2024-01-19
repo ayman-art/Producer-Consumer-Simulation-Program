@@ -1,4 +1,4 @@
-package config;
+package com.ayman.ProducerConsumer.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

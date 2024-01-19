@@ -1,4 +1,4 @@
-package controllers;
+package com.ayman.ProducerConsumer.controllers;
 
 import org.springframework.stereotype.Controller;
 

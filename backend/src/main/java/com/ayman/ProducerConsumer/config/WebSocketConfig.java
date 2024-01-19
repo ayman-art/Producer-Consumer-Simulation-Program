@@ -1,4 +1,4 @@
-package config;
+package com.ayman.ProducerConsumer.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
