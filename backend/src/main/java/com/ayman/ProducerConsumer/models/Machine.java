@@ -75,23 +75,25 @@ public class Machine {
         }
     }
 
-    public void update() {
-        if (runningThread != null && runningThread.isAlive()) {
-            return;
-        }
+    public synchronized void update() {
 
         runningThread = new Thread(() -> {
             try {
                 for (QueueManager queueManager : inputQueueManagers) {
-                    if (!queueManager.isEmpty()) {
-                        Product product = queueManager.getProduct();
-                        setColor(product.getColor());
-                        setCurrentProduct(product);
-                        completed = false;
-                        Thread.sleep(servingTime);
-                        completed = true;
-                        notifyQueueManagers();
-                        break;
+                    synchronized (queueManager){
+                        if (!queueManager.isEmpty()) {
+                            Product product = queueManager.getProduct();
+                            setColor(product.getColor());
+                            setCurrentProduct(product);
+                            completed = false;
+                            Thread.sleep(servingTime);
+                            completed = true;
+                            synchronized (this.queueManager) {
+                                this.queueManager.addProduct(product);
+                            }
+                            notifyQueueManagers();
+                            break;
+                        }
                     }
                 }
             } catch (InterruptedException e) {
