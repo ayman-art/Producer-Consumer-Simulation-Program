@@ -1,10 +1,10 @@
-package com.ayman.simulation;
+package com.example.ProducerConsumer;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SimulationApplicationTests {
+class ProducerConsumerApplicationTests {
 
 	@Test
 	void contextLoads() {

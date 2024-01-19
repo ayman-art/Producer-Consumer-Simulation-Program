@@ -1,13 +1,13 @@
-package com.ayman.simulation;
+package com.example.ProducerConsumer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SimulationApplication {
+public class ProducerConsumerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SimulationApplication.class, args);
+		SpringApplication.run(ProducerConsumerApplication.class, args);
 	}
 
 }
