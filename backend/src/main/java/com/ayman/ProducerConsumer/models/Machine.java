@@ -4,14 +4,12 @@ import java.util.Random;
 
 public class Machine {
 
-    static final String defaultColor = "ffffff";
 
-    static int idCounter = 0;
 
     private final int id;
+    private final int servingTime;
     private String color;
 
-    private final int servingTime;
 
     private boolean completed;
 
@@ -19,11 +17,11 @@ public class Machine {
 
     private final QueueManager queueManager;
 
-    public Machine(QueueManager queueManager) {
-        this.id = idCounter++;
-        this.color = defaultColor;
-        this.servingTime = new Random().nextInt(5000);
+    public Machine(int id, String color, QueueManager queueManager) {
+        this.id = id;
+        this.color = color;
         this.queueManager = queueManager;
+        this.servingTime = new Random().nextInt(5000);
     }
 
     public int getId() {
@@ -59,18 +57,4 @@ public class Machine {
     public void setColor(String color) {
         this.color = color;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
