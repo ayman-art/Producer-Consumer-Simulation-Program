@@ -4,10 +4,9 @@ import java.util.List;
 import java.util.Queue;
 
 public class QueueManager {
-
+    private final long id;
     private final Queue<Product> products;
     private final List<Machine> listeners;
-    private final long id;
 
     public QueueManager(int id, Queue<Product> products, List<Machine> listeners) {
         this.id = id;
@@ -15,10 +14,10 @@ public class QueueManager {
         this.listeners = listeners;
     }
 
-
     public long getId() {
         return id;
     }
+
     public int getListenersCount() {
         return listeners.size();
     }
@@ -32,9 +31,7 @@ public class QueueManager {
     }
 
     public void notifyAllListeners() {
-        for (Machine machine : listeners) {
-            machine.process();
-        }
+
     }
 
     public void addProduct(Product product) {
