@@ -33,7 +33,12 @@ public class QueueManager {
 
     public void notifyAllListeners() {
         for (Machine machine : listeners) {
-            machine.process();
+            synchronized (machine) {
+                if (machine.isCompleted()) {
+                    continue;
+                }
+                machine.update();
+            }
         }
     }
 
@@ -48,6 +53,8 @@ public class QueueManager {
     public boolean isEmpty() {
         return products.isEmpty();
     }
+
+
 
 
 
