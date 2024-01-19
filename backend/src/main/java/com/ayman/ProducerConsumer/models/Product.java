@@ -3,16 +3,14 @@ package com.ayman.ProducerConsumer.models;
 import java.awt.*;
 
 public class Product {
-    static long idCounter = 0;
 
-    private long id;
-    String color;
+    private final long id;
+    final String color;
 
-    public Product() {
-        this.id = idCounter++;
+    public Product(long id) {
+        this.id = id;
         //generating random color
         this.color = generateRandomColor();
-
     }
 
     private String generateRandomColor() {
@@ -26,9 +24,5 @@ public class Product {
 
     public String getColor() {
         return this.color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
     }
 }
