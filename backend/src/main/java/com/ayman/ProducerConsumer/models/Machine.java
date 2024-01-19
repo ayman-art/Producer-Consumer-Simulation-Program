@@ -1,5 +1,8 @@
 package com.ayman.ProducerConsumer.models;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 public class Machine {
@@ -44,10 +47,19 @@ public class Machine {
 
     public void setCurrentProduct(Product currentProduct) {
         this.currentProduct = currentProduct;
+        this.color = this.currentProduct.getColor();
     }
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public Map<String, Object> getCurrentState() {
+        Map<String, Object> state = new HashMap<>();
+        state.put("id", id);
+        state.put("color", color);
+
+        return state;
     }
 
     public void process() {

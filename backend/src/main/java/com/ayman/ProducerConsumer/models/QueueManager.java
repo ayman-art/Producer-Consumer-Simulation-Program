@@ -1,7 +1,6 @@
 package com.ayman.ProducerConsumer.models;
 
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class QueueManager {
     private final long id;
@@ -46,7 +45,11 @@ public class QueueManager {
         return products.isEmpty();
     }
 
+    public Map<String, Object> getCurrentState() {
+        Map<String, Object> state = new HashMap<>();
+        state.put("id", id);
+        state.put("count", getListenersCount());
 
-
-
+        return state;
+    }
 }
