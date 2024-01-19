@@ -1,9 +1,24 @@
 package com.ayman.ProducerConsumer.models;
 
+import java.util.List;
 import java.util.Queue;
 
-public record QueueManager(int id, String color, Queue<Machine> listeners) {
+public class QueueManager {
 
+    private final Queue<Product> products;
+    private final List<Machine> listeners;
+    private final long id;
+
+    public QueueManager(int id, Queue<Product> products, List<Machine> listeners) {
+        this.id = id;
+        this.products = products;
+        this.listeners = listeners;
+    }
+
+
+    public long getId() {
+        return id;
+    }
     public int getListenersCount() {
         return listeners.size();
     }
@@ -18,8 +33,23 @@ public record QueueManager(int id, String color, Queue<Machine> listeners) {
 
     public void notifyAllListeners() {
         for (Machine machine : listeners) {
+            machine.process();
         }
     }
+
+    public void addProduct(Product product) {
+        products.add(product);
+    }
+
+    public Product getProduct() {
+        return products.poll();
+    }
+
+    public boolean isEmpty() {
+        return products.isEmpty();
+    }
+
+
 
 
 }

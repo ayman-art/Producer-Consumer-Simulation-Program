@@ -17,6 +17,8 @@ public class Machine {
 
     private final QueueManager queueManager;
 
+    private Thread runningThread;
+
     public Machine(int id, String color, QueueManager queueManager) {
         this.id = id;
         this.color = color;
@@ -57,4 +59,9 @@ public class Machine {
     public void setColor(String color) {
         this.color = color;
     }
+
+    public void process() {
+
+    }
+
 }
