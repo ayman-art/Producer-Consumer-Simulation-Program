@@ -3,7 +3,7 @@ package com.ayman.ProducerConsumer.models;
 import java.util.*;
 
 public class QueueManager {
-    private final long id;
+    private final int id;
     private final Queue<Product> products;
     private final List<Machine> listeners;
 

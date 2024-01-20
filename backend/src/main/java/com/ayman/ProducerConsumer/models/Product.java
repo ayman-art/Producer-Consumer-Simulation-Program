@@ -4,10 +4,10 @@ import java.awt.*;
 import java.util.Random;
 
 public class Product {
-    private final long id;
+    private final int id;
     final String color;
 
-    public Product(long id) {
+    public Product(int id) {
         this.id = id;
         //generating random color
         this.color = generateRandomColor();
