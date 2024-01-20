@@ -2,11 +2,10 @@ package com.ayman.ProducerConsumer.models;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
 
-public class Machine {
-    private final int id;
+public class Machine implements Runnable {
+    private final int machineId;
     private final int servingTime;
     private String color;
     private boolean completed;
@@ -15,15 +14,15 @@ public class Machine {
     private Thread runningThread;
 
     public Machine(int id, String color, QueueManager queueManager) {
-        this.id = id;
+        this.machineId = id;
         this.color = color;
         this.queueManager = queueManager;
         this.servingTime = new Random().nextInt(500, 5000);
         this.completed = true;
     }
 
-    public int getId() {
-        return id;
+    public int getMachineId() {
+        return machineId;
     }
 
     public String getColor() {
@@ -58,14 +57,34 @@ public class Machine {
 
     public Map<String, Object> getCurrentState() {
         Map<String, Object> state = new HashMap<>();
-        state.put("id", id);
+        state.put("id", machineId);
         state.put("color", color);
 
         return state;
     }
 
     public void process() {
-
+        Thread thread = new Thread(this);
+        thread.start();
     }
 
+    @Override
+    public void run() {
+        synchronized (queueManager) {
+            try {
+                Thread.sleep(servingTime);
+                queueManager.notifyAllListeners(currentProduct);
+                resetMachine();
+            } catch (InterruptedException e) {
+                System.out.println("Error occurred in Processing Machine");
+            }
+        }
+    }
+
+    private void resetMachine() {
+        System.out.println("Finish Thread machine id: " + machineId + " prod id: " + currentProduct.getId());
+        this.color = "00CC00";
+        this.completed = true;
+        this.currentProduct = null;
+    }
 }

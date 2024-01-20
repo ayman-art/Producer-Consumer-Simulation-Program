@@ -36,8 +36,15 @@ public class QueueManager {
             if (isEmpty())
                 return;
 
-            if (machine.isCompleted())
+            if (machine.isCompleted()) {
                 machine.setCurrentProduct(getProduct());
+                try {
+                    machine.process();
+                } catch (IllegalThreadStateException e) {
+                    System.out.println("Er");
+                }
+
+            }
         }
     }
 
