@@ -43,6 +43,10 @@ public class SimulationService {
         template.convertAndSend("/simulate/public", snapshot);
     }
 
+    public void sendSnapshot(Snapshot snapshot) {
+        template.convertAndSend("/simulate/public", snapshot);
+    }
+
     private List<Machine> parseMachines(List<Object> data) {
         List<Machine> curMachines = new ArrayList<>();
 

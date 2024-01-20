@@ -13,33 +13,30 @@ public class ProductConsumerSimulation {
     private final List<Snapshot> snapshots = new ArrayList<>();
     private InputSeed inputSeed;
     private final SimulationService service;
+    private SimulationState currentState;
 
     public ProductConsumerSimulation(SimulationService service) {
         this.service = service;
+        currentState = SimulationState.STOP;
     }
 
     public void start() {
-        inputSeed.setState(SimulationState.START);
+        currentState = SimulationState.START;
+        inputSeed.setState(currentState);
         inputSeed.start();
     }
 
     public void replay() {
-//        template.convertAndSend("/simulate/public", "Replay");
+        currentState = SimulationState.REPLAY;
+        inputSeed.setState(currentState);
 
-//        Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                System.out.println("Replay");
-//                template.convertAndSend("/simulate/public", "Start");
-//            }
-//        };
-//
-//        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-//        executorService.scheduleAtFixedRate(runnable, 0, 1, TimeUnit.SECONDS);
+        Thread thread = new Thread(replayLogic());
+        thread.start();
     }
 
     public void stop() {
-        inputSeed.setState(SimulationState.STOP);
+        currentState = SimulationState.STOP;
+        inputSeed.setState(currentState);
     }
 
     public Snapshot takeSnapshot() {
@@ -73,5 +70,25 @@ public class ProductConsumerSimulation {
     private void addAllQueuesToSnapShot(Snapshot snapshot) {
         for (QueueManager manager : queues)
             snapshot.addQueue(manager.getCurrentState());
+    }
+
+    private Runnable replayLogic() {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                int i = 0;
+                while (currentState == SimulationState.REPLAY && i < snapshots.size()) {
+                    Snapshot curSnapshot = snapshots.get(i++);
+                    service.sendSnapshot(curSnapshot);
+                    try {
+                        Thread.sleep(curSnapshot.getTime() * 1000L);
+                    } catch (InterruptedException e) {
+                        System.out.println("Error in replaying");
+                    }
+                }
+            }
+        };
+
+        return runnable;
     }
 }
