@@ -3,18 +3,20 @@ package com.ayman.ProducerConsumer.Service;
 import com.ayman.ProducerConsumer.models.Machine;
 import com.ayman.ProducerConsumer.models.ProductConsumerSimulation;
 import com.ayman.ProducerConsumer.models.QueueManager;
+import com.ayman.ProducerConsumer.models.Snapshot;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 public class SimulationService {
+    private final ProductConsumerSimulation simulation = new ProductConsumerSimulation(this);
+    private Map<Integer, QueueManager> queueManagerMap = new HashMap<>();
+    private List<Machine> machines;
     @Autowired
-    ProductConsumerSimulation simulation;
-
-    Map<Integer, QueueManager> queueManagerMap = new HashMap<>();
-    List<Machine> machines;
+    private SimpMessagingTemplate template;
 
     public void startSimulation(Map<String, Object> data) {
         var queues = parsesQueues((ArrayList) data.get("queues"));
@@ -33,6 +35,12 @@ public class SimulationService {
 
     public void replaySimulation() {
         simulation.replay();
+    }
+
+    public void sendSnapshot() {
+        Snapshot snapshot = this.simulation.takeSnapshot();
+
+        template.convertAndSend("/simulate/public", snapshot);
     }
 
     private List<Machine> parseMachines(List<Object> data) {
@@ -62,7 +70,7 @@ public class SimulationService {
             Map<String, Integer> mp = (Map<String, Integer>) queue;
             Integer id = mp.get("id");
 
-            var manager = new QueueManager(mp.get("id"), new LinkedList<>(), new ArrayList<>());
+            var manager = new QueueManager(mp.get("id"), new LinkedList<>(), new ArrayList<>(), this);
             managers.add(manager);
             queueManagerMap.put(id, manager);
         }

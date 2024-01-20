@@ -1,14 +1,17 @@
 package com.ayman.ProducerConsumer.models;
 
+import com.ayman.ProducerConsumer.Service.SimulationService;
+
 import java.util.concurrent.ThreadLocalRandom;
 
 public class InputSeed extends Thread{
     private boolean state;
     private final QueueManager queueManager;
-    private final ProductConsumerSimulation simulation;
 
-    public InputSeed(ProductConsumerSimulation simulation, QueueManager queueManager) {
-        this.simulation = simulation;
+    private final SimulationService service;
+
+    public InputSeed(SimulationService service, QueueManager queueManager) {
+        this.service = service;
         this.queueManager = queueManager;
     }
 
@@ -20,7 +23,7 @@ public class InputSeed extends Thread{
                 try {
                     Product product = new Product();
                     queueManager.notifyAllListeners(product);
-                    this.simulation.takeSnapshot();
+                    this.service.sendSnapshot();
                     Thread.sleep(inputRate);
 
                     System.out.println(product.getId());

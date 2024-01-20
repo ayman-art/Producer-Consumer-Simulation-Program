@@ -1,7 +1,6 @@
 package com.ayman.ProducerConsumer.models;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import com.ayman.ProducerConsumer.Service.SimulationService;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -13,15 +12,17 @@ public class ProductConsumerSimulation {
     private List<QueueManager> queues;
     private final List<Snapshot> snapshots = new ArrayList<>();
     private InputSeed inputSeed;
+    private final SimulationService service;
 
-    @Autowired
-    SimpMessagingTemplate template;
+    public ProductConsumerSimulation(SimulationService service) {
+        this.service = service;
+    }
 
     public void start() {
         inputSeed.setState(true);
         inputSeed.start();
 
-        template.convertAndSend("/simulate/public", "Start");
+//        template.convertAndSend("/simulate/public", "Start");
 //        Runnable runnable = new Runnable() {
 //            @Override
 //            public void run() {
@@ -35,7 +36,7 @@ public class ProductConsumerSimulation {
     }
 
     public void replay() {
-        template.convertAndSend("/simulate/public", "Replay");
+//        template.convertAndSend("/simulate/public", "Replay");
 
 //        Runnable runnable = new Runnable() {
 //            @Override
@@ -51,7 +52,7 @@ public class ProductConsumerSimulation {
 
     public void stop() {
         inputSeed.setState(false);
-        template.convertAndSend("/simulate/public", "Stop");
+//        template.convertAndSend("/simulate/public", "Stop");
 
 //        Runnable runnable = new Runnable() {
 //            @Override
@@ -65,7 +66,7 @@ public class ProductConsumerSimulation {
 //        executorService.scheduleAtFixedRate(runnable, 0, 1, TimeUnit.SECONDS);
     }
 
-    public void takeSnapshot() {
+    public Snapshot takeSnapshot() {
         Snapshot snapshot = new Snapshot();
 
         addAllMachinesToSnapshot(snapshot);
@@ -73,7 +74,8 @@ public class ProductConsumerSimulation {
 
         this.snapshots.add(snapshot);
 
-        template.convertAndSend("/simulate/public", snapshot);
+//        template.convertAndSend("/simulate/public", snapshot);
+        return snapshot;
     }
 
     public void setMachines(List<Machine> machines) {
@@ -85,7 +87,7 @@ public class ProductConsumerSimulation {
     }
 
     public void setInputQueue(QueueManager inputQueue) {
-        inputSeed = new InputSeed(this, inputQueue);
+        inputSeed = new InputSeed(service, inputQueue);
     }
 
     private void addAllMachinesToSnapshot(Snapshot snapshot) {

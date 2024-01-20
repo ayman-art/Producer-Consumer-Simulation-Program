@@ -1,16 +1,21 @@
 package com.ayman.ProducerConsumer.models;
 
+import com.ayman.ProducerConsumer.Service.SimulationService;
+import org.w3c.dom.ls.LSResourceResolver;
+
 import java.util.*;
 
 public class QueueManager {
     private final int id;
     private final Queue<Product> products;
     private final List<Machine> listeners;
+    private final SimulationService service;
 
-    public QueueManager(int id, Queue<Product> products, List<Machine> listeners) {
+    public QueueManager(int id, Queue<Product> products, List<Machine> listeners, SimulationService service) {
         this.id = id;
         this.products = products;
         this.listeners = listeners;
+        this.service = service;
     }
 
     public long getId() {
@@ -43,9 +48,9 @@ public class QueueManager {
                 } catch (IllegalThreadStateException e) {
                     System.out.println("Er");
                 }
-
             }
         }
+        this.service.sendSnapshot();
     }
 
     public void addProduct(Product product) {
