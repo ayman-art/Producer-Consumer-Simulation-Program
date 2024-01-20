@@ -5,7 +5,7 @@ import com.ayman.ProducerConsumer.Service.SimulationService;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class InputSeed extends Thread{
-    private boolean state;
+    private SimulationState state;
     private final QueueManager queueManager;
 
     private final SimulationService service;
@@ -18,7 +18,7 @@ public class InputSeed extends Thread{
     @Override
     public void run() {
         synchronized (queueManager) {
-            while (state) {
+            while (state == SimulationState.START) {
                 int inputRate = ThreadLocalRandom.current().nextInt(200, 3000);
                 try {
                     Product product = new Product();
@@ -34,7 +34,7 @@ public class InputSeed extends Thread{
         }
     }
 
-    public void setState(boolean state) {
+    public void setState(SimulationState state) {
         this.state = state;
     }
 }

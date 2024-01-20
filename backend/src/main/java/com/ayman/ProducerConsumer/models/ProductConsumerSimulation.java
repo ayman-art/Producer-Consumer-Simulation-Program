@@ -19,20 +19,8 @@ public class ProductConsumerSimulation {
     }
 
     public void start() {
-        inputSeed.setState(true);
+        inputSeed.setState(SimulationState.START);
         inputSeed.start();
-
-//        template.convertAndSend("/simulate/public", "Start");
-//        Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                System.out.println("Start");
-//                template.convertAndSend("/simulate/public", "Start");
-//            }
-//        };
-//
-//        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-//        executorService.scheduleAtFixedRate(runnable, 0, 1, TimeUnit.SECONDS);
     }
 
     public void replay() {
@@ -51,19 +39,7 @@ public class ProductConsumerSimulation {
     }
 
     public void stop() {
-        inputSeed.setState(false);
-//        template.convertAndSend("/simulate/public", "Stop");
-
-//        Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                System.out.println("Stop");
-//                template.convertAndSend("/simulate/public", "Start");
-//            }
-//        };
-//
-//        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-//        executorService.scheduleAtFixedRate(runnable, 0, 1, TimeUnit.SECONDS);
+        inputSeed.setState(SimulationState.STOP);
     }
 
     public Snapshot takeSnapshot() {
@@ -74,7 +50,6 @@ public class ProductConsumerSimulation {
 
         this.snapshots.add(snapshot);
 
-//        template.convertAndSend("/simulate/public", snapshot);
         return snapshot;
     }
 
