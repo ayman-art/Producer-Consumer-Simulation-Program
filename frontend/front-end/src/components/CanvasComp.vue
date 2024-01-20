@@ -8,6 +8,9 @@
 
 <script>
 //import { Line, Rectangle, Triangle, Circle, Square, Ellipse } from '../models/shapes.js'
+import  Arrow  from '../models/arrow'
+import  Machine  from '../models/machine'
+import  Queue  from '../models/queue'
 const port = 8080
 
 export default {
@@ -93,12 +96,12 @@ export default {
     this.c.addEventListener('mousedown', (e) => this.mousedown(e))
     this.c.addEventListener('mouseup', (e) => this.mouseup(e))
     this.c.addEventListener('click', (e) => this.clicked(e))
-    const undo = document.getElementById('undo')
-    undo.addEventListener('click', () => this.undo())
-    const redo = document.getElementById('redo')
-    redo.addEventListener('click', () => this.redo())
-    const clear = document.getElementById('clear')
-    clear.addEventListener('click', () => this.clear())
+    // const undo = document.getElementById('undo')
+    // undo.addEventListener('click', () => this.undo())
+    // const redo = document.getElementById('redo')
+    // redo.addEventListener('click', () => this.redo())
+    // const clear = document.getElementById('clear')
+    // clear.addEventListener('click', () => this.clear())
     document.body.addEventListener('mouseup', () => (this.mouseDownState = false))
     this.ctx = this.c.getContext('2d')
     this.width = window.innerWidth - 20
@@ -113,7 +116,8 @@ export default {
 
 <style scoped>
 #canvas {
-  width: auto;
+  width: 100%;
+  height: 550px;
   border-radius: 25px;
   border: 2px solid black;
   margin-top: 10px;
