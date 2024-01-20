@@ -8,6 +8,7 @@ import java.util.List;
 
 @Component
 public class ProductConsumerSimulation {
+    public static long curTime = System.currentTimeMillis();
     private List<Machine> machines;
     private List<QueueManager> queues;
     private final List<Snapshot> snapshots = new ArrayList<>();
@@ -21,6 +22,7 @@ public class ProductConsumerSimulation {
     }
 
     public void start() {
+        curTime = System.currentTimeMillis();
         currentState = SimulationState.START;
         inputSeed.setState(currentState);
         inputSeed.start();
@@ -44,6 +46,10 @@ public class ProductConsumerSimulation {
 
         addAllMachinesToSnapshot(snapshot);
         addAllQueuesToSnapShot(snapshot);
+
+        long timeNow = System.currentTimeMillis();
+        snapshot.setTime((int) (timeNow - curTime));
+        curTime = timeNow;
 
         this.snapshots.add(snapshot);
 
@@ -81,7 +87,7 @@ public class ProductConsumerSimulation {
                     Snapshot curSnapshot = snapshots.get(i++);
                     service.sendSnapshot(curSnapshot);
                     try {
-                        Thread.sleep(curSnapshot.getTime() * 1000L);
+                        Thread.sleep(curSnapshot.getTime());
                     } catch (InterruptedException e) {
                         System.out.println("Error in replaying");
                     }
