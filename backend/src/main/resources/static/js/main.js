@@ -40,8 +40,8 @@ function start() {
   stompClient.publish({
     destination: "/app/start",
     body: JSON.stringify({
-      machines: [{ id: 2, in: 1, out: 3 }],
-      queues: [{ id: 1 }, { id: 3 }],
+      machines: [{ id: 2, in: 0, out: 1 }],
+      queues: [{ id: 1 }, { id: 0 }],
     }),
   });
 }

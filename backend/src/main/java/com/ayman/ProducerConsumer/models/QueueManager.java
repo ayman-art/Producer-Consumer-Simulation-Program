@@ -29,8 +29,16 @@ public class QueueManager {
         listeners.remove(machine);
     }
 
-    public void notifyAllListeners() {
+    public void notifyAllListeners(Product product) {
+        addProduct(product);
 
+        for (Machine machine : listeners) {
+            if (isEmpty())
+                return;
+
+            if (machine.isCompleted())
+                machine.setCurrentProduct(getProduct());
+        }
     }
 
     public void addProduct(Product product) {

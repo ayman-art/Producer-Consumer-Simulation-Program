@@ -48,6 +48,7 @@ public class Machine {
     public void setCurrentProduct(Product currentProduct) {
         this.currentProduct = currentProduct;
         this.color = this.currentProduct.getColor();
+        setState(false);
     }
 
     public void setColor(String color) {

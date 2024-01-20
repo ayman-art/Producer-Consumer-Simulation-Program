@@ -4,11 +4,12 @@ import java.awt.*;
 import java.util.Random;
 
 public class Product {
+    private static int prodCount = 0;
     private final int id;
     final String color;
 
-    public Product(int id) {
-        this.id = id;
+    public Product() {
+        this.id = prodCount++;
         //generating random color
         this.color = generateRandomColor();
     }

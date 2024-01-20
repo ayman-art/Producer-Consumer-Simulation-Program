@@ -22,6 +22,7 @@ public class SimulationService {
 
         simulation.setQueues(queues);
         simulation.setMachines(machines);
+        simulation.setInputQueue(queueManagerMap.get(0));
 
         simulation.start();
     }
