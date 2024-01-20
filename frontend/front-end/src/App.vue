@@ -1,24 +1,71 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
+
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+  <div id="username-page">
+    <div class="username-page-container">
+        <h1 class="title">Type your username to enter the Chatroom</h1>
+        <form id="usernameForm" name="usernameForm">
+            <div class="form-group">
+                <input type="text" id="name" placeholder="Username" autocomplete="off" class="form-control" />
+            </div>
+            <div class="form-group">
+                <div  @click="connectWebSocket" class="accent username-submit">Start Chatting</div>
+            </div>
+        </form>
     </div>
-  </header>
+</div>
 
-  <RouterView />
+<div id="chat-page" class="hidden">
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>Spring WebSocket Chat Demo - By Alibou</h2>
+        </div>
+        <div class="connecting">
+            Connecting...
+        </div>
+        <ul id="messageArea">
+
+        </ul>
+        <form id="messageForm" name="messageForm">
+            <div class="form-group">
+                <div class="input-group clearfix">
+                    <input type="text" id="message" placeholder="Type a message..." autocomplete="off" class="form-control"/>
+                    <div  @click="handleWebSocketMessage" class="primary">Send</div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 </template>
+<script>
+import WebSocketService from './services/WebSocketService';
+
+export default {
+  data() {
+    return {
+      webSocketService: new WebSocketService(),
+    };
+  },
+  mounted() {
+    this.connectWebSocket();
+  },
+  beforeDestroy() {
+    this.disconnectWebSocket();
+  },
+  methods: {
+    connectWebSocket() {
+      this.webSocketService.connect();
+    },
+    disconnectWebSocket() {
+      this.webSocketService.disconnect();
+    },
+    handleWebSocketMessage(message) {
+      console.log('Received WebSocket message:', message);
+      // Handle the received message as needed
+    },
+  },
+};
+</script>
 
 <style scoped>
 header {
