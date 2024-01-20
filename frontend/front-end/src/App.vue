@@ -1,85 +1,116 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+<script>
+import { ref } from 'vue'
+import CanvasComp from './components/CanvasComp.vue'
+
+  export default {
+    data(){
+      return {
+        port : 8080,
+        selected: ref("none")
+      }
+    },
+    components:{
+      CanvasComp
+    },
+    methods:{
+
+    }
+  }
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+  <div id="container">
+    <DialogComp
+      v-if="showDialog"
+      :requirements="requirements"
+      :default-values="defaultValues"
+      @changeParameters="changeParameters"
+    />
+    <div id="toolbox">
+      <div id="tool-container">
+        <li>
+          <div class="tool" @click="selected = 'line'">
+            <img
+              width="25"
+              height="25"
+              src="https://img.icons8.com/ios/50/line--v1.png"
+              alt="line--v1"
+            />
+          </div>
+        </li>
+        <li>
+          <div class="tool" @click="selected = 'square'">
+            <img width="25" 
+            height="25" 
+            src="https://img.icons8.com/ios/50/circled-m.png" alt="circled-m"/>
+          </div>
+        </li>
+        <li>
+          <div class="tool" @click="selected = 'rectangle'">
+            <img
+              width="25"
+              height="25"
+              src="https://img.icons8.com/material-sharp/24/rectangle-stroked.png"
+              alt="rectangle-stroked"
+            />
+          </div>
+        </li>
+        <li>
+          <div class="tool" id="clear">
+            <img width="25" height="25" src="https://img.icons8.com/ios/50/broom.png" alt="broom" />
+          </div>
+        </li>
+      </div>
+      <div id="active-box">
+        <span>{{ selected }}</span>
+      </div>
     </div>
-  </header>
-
-  <RouterView />
+    <div>
+      <CanvasComp :selected="selected" @open-dialog="openDialog" ref="applyChangesRef" />
+    </div>
+  </div>
 </template>
 
+
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+#file-selector {
+  float: left;
+  margin-top: 13px;
 }
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+#color-selector {
+  float: left;
+  margin-top: 10px;
 }
-
-nav {
+#toolbox {
+  height: 50px;
+  border-radius: 24px;
   width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+  background-color: rgb(161, 21, 35);
 }
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
+#active-box {
+  float: right;
+  margin-right: 50px;
+  padding: 10px 10px 10px 10px;
+  height: 20px;
+  margin-top: 3px;
+  border-radius: 5px;
+  border: 2px solid black;
 }
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
+#tool-container {
+  margin-left: 24px;
 }
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
+li {
+  float: left;
+  list-style-type: none;
 }
-
-nav a:first-of-type {
-  border: 0;
+.tool {
+  height: 10%;
+  padding: 10px;
 }
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+.tool:hover {
+  background-color: rgb(153, 11, 18);
+}
+.selected {
+  background-color: rgb(87, 87, 87);
 }
 </style>
