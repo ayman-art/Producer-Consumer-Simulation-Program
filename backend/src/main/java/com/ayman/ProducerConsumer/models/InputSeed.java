@@ -18,10 +18,10 @@ public class InputSeed extends Thread{
             while (state) {
                 int inputRate = ThreadLocalRandom.current().nextInt(200, 3000);
                 try {
-                    Thread.sleep(inputRate);
                     Product product = new Product();
                     queueManager.notifyAllListeners(product);
                     this.simulation.takeSnapshot();
+                    Thread.sleep(inputRate);
 
                     System.out.println(product.getId());
                 } catch (InterruptedException e) {

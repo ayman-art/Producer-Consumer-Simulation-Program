@@ -56,7 +56,7 @@ public class QueueManager {
     public Map<String, Object> getCurrentState() {
         Map<String, Object> state = new HashMap<>();
         state.put("id", id);
-        state.put("count", getListenersCount());
+        state.put("count", products.size());
 
         return state;
     }

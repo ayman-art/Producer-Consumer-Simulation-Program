@@ -19,6 +19,7 @@ public class Machine {
         this.color = color;
         this.queueManager = queueManager;
         this.servingTime = new Random().nextInt(500, 5000);
+        this.completed = true;
     }
 
     public int getId() {
