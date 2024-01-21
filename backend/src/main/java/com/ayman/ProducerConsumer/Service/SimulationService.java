@@ -53,13 +53,25 @@ public class SimulationService {
         for (Object obj : data) {
             Map<String, Object> mp = (Map<String, Object>) obj;
             Integer id = (Integer) mp.get("id");
-            Integer inQueueId = (Integer) mp.get("in");
-            Integer outQueueId = (Integer) mp.get("out");
 
-            QueueManager inQueue = queueManagerMap.get(inQueueId);
+            List<Integer> inputQueuesIds = (List<Integer>) mp.get("in");
+            List<QueueManager> inputQueues = new ArrayList<>();
+            inputQueuesIds.forEach(
+                    inputQueueId -> inputQueues.add(queueManagerMap.get(inputQueueId))
+            );
+
+
+            Integer outQueueId = (Integer) mp.get("out");
             QueueManager outQueue = queueManagerMap.get(outQueueId);
-            Machine machine = new Machine(id, "00CC00", outQueue);
-            inQueue.subscribe(machine);
+
+            Machine machine = new Machine(id, "00CC00", outQueue, this);
+            for(QueueManager queueManager: inputQueues) {
+                queueManager.subscribe(machine);
+                machine.subscribe(queueManager);
+            }
+
+
+
 
             curMachines.add(machine);
         }
