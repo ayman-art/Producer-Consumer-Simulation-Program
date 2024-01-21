@@ -103,6 +103,7 @@ public class Machine implements Runnable {
 
     @Override
     public void run() {
+
         synchronized (queueManager) {
             try {
                 Thread.sleep(servingTime);
@@ -112,6 +113,8 @@ public class Machine implements Runnable {
                 System.out.println("Error occurred in Processing Machine");
             }
         }
+
+        notifyAllListeners();
     }
 //    @Override
 //    public void run() {

@@ -65,8 +65,10 @@ public class SimulationService {
             QueueManager outQueue = queueManagerMap.get(outQueueId);
 
             Machine machine = new Machine(id, "00CC00", outQueue, this);
-            for(QueueManager queueManager: inputQueues)
+            for(QueueManager queueManager: inputQueues) {
                 queueManager.subscribe(machine);
+                machine.subscribe(queueManager);
+            }
 
 
 
