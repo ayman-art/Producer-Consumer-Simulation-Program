@@ -7,7 +7,9 @@ import { Client } from '@stomp/stompjs'
       return {
         port : 8080,
         selected: ref("none"),
-        snapshots : ref([])
+        selectedShape: ref(null),
+        snapshots : ref([]),
+        canvas : ref(null)
       }
     },
     setup() {
@@ -33,11 +35,9 @@ import { Client } from '@stomp/stompjs'
       }
 
       const connect = () => {
+        console.log('trying to connect')
         stompClient.activate()
       }
-
-      
-
       connect()
 
       //return { snapshots, start, stop, replay }
@@ -73,19 +73,17 @@ import { Client } from '@stomp/stompjs'
           destination: '/app/replay'
         })
       }
-    }
+    },
+    // mounted(){
+    //   //this.canvas.value =
+    // }
   }
 </script>
 
 
 <template>
   <div id="container">
-    <DialogComp
-      v-if="showDialog"
-      :requirements="requirements"
-      :default-values="defaultValues"
-      @changeParameters="changeParameters"
-    />
+    
     <div id="toolbox">
       <div id="tool-container">
         <li>
@@ -136,7 +134,7 @@ import { Client } from '@stomp/stompjs'
       </div>
     </div>
     <div>
-      <CanvasComp :selected="selected" @open-dialog="openDialog" ref="applyChangesRef" />
+      <CanvasComp :selected="selected" :machines="machines" :queues="queues" :connections="connections" ref="canvasRef" />
     </div>
   </div>
 </template>

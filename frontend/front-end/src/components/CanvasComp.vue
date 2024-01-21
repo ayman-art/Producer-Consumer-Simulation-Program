@@ -8,14 +8,16 @@
 
 <script>
 //import { Line, Rectangle, Triangle, Circle, Square, Ellipse } from '../models/shapes.js'
-import  Arrow  from '../models/arrow'
-import  Machine  from '../models/machine'
-import  Queue  from '../models/queue'
+import  Arrow  from '../models/arrow.js'
+import  Machine  from '../models/machine.js'
+import  Queue  from '../models/queue.js'
+import { ref } from 'vue'
 const port = 8080
 
 export default {
   props: {
-    selected: String
+    selected: String,
+
   },
   data() {
     return {
@@ -27,7 +29,10 @@ export default {
       startx: 0,
       starty: 0,
       endx: 0,
-      endy: 0
+      endy: 0,
+      machines: ref([]),
+      queues: ref([]),
+      connections: ref([]),
     }
   },
   methods: {
@@ -69,25 +74,31 @@ export default {
       }
       this.mouseDownState = false
     },
+    drawElements(){
+      this.ctx.clearRect(0,0, this.width, this.height)
+      for(let connection in this.connections) {
+        connection.draw()
+      }
+      for(let machine in this.machines){
+        machine.draw()
+      }
+      for(let queue in this.queues){
+        queue.draw()
+      }
+
+    },
     clicked(e) {
       const x = e.x - 10
       const y = e.y - 70
-      if (this.selected == 'copy') {
-        this.getSelectedShape(x, y)
-      } else if (this.selected == 'paste') {
-        if (this.selectedShape) this.pasteShape(x, y, this.selectedShape)
-      } else if (this.selected == 'delete') {
-        this.getSelectedShape(x, y)
-        if (this.selectedShape) this.deleteShape(this.selectedShape)
-      } else if (this.selected == 'options') {
-        this.getSelectedShape(x, y)
-        if (this.selectedShape) this.openOptions()
+      if (this.selected == 'machine') {
+        let machine = new Machine(x, y)
+        this.machines.push(machine)
+        this.drawElements()
+      } else if (this.selected == 'queue') {
+        let queue = new Queue(x, y)
+        this.queues.push(queue)
+        this.drawElements()
       }
-    },
-    async clear() {
-      await fetch(`http://localhost:${port}/clear`)
-      await this.getShapes()
-      this.drawShapes()
     },
   },
   expose: [],
@@ -108,8 +119,8 @@ export default {
     this.height = window.innerHeight - 100
     this.c.width = this.width
     this.c.height = this.height
-    await this.getShapes()
-    this.drawShapes()
+    //await this.getShapes()
+    //this.drawShapes()
   }
 }
 </script>
