@@ -1,21 +1,22 @@
 package com.ayman.ProducerConsumer.models;
 
 import java.awt.*;
+import java.util.Random;
 
 public class Product {
-
-    private final long id;
+    private static int prodCount = 0;
+    private final int id;
     final String color;
 
-    public Product(long id) {
-        this.id = id;
+    public Product() {
+        this.id = prodCount++;
         //generating random color
         this.color = generateRandomColor();
     }
 
     private String generateRandomColor() {
-        Color color = new Color((int) (Math.random() * 0x1000000));
-        return String.format("%06x", color.getRGB() & 0xFFFFFF);
+        int numColor = new Random().nextInt(0x1000000);
+        return String.format("%06x", numColor);
     }
 
     public long getId() {
