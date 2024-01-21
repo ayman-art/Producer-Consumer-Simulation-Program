@@ -16,12 +16,12 @@ import { Client } from '@stomp/stompjs'
       const stompClient = new Client({
         brokerURL: 'ws://localhost:8080/ws'
       })
-
+      let snapshots = ref([])
       stompClient.onConnect = (frame) => {
         console.log('Connected: ' + frame)
         stompClient.subscribe('/simulate/public', (e) => {
-          snapshots.value.push(e.body)
           console.log(e.body)
+          this.$refs.canvasRef.updateSystem(e.body)
         })
       }
 
@@ -35,48 +35,52 @@ import { Client } from '@stomp/stompjs'
       }
 
       const connect = () => {
-        console.log('trying to connect')
         stompClient.activate()
       }
       connect()
-
-      //return { snapshots, start, stop, replay }
+      return {stompClient, snapshots}
     },
     components:{
       CanvasComp
     },
     methods:{
-      start() {
-        stompClient.publish({
+      clearCanvas(){
+        this.$refs.canvasRef.clear()
+      },
+      startSimulation(){
+        let outputObject = this.$refs.canvasRef.formatSystem()
+        if(outputObject == null) {
+          alert("Please submit a valid system")
+        }else{
+          console.log(outputObject)
+          this.start(outputObject)
+        }
+      },
+      stopSimulation(){
+        this.stop()
+      },
+      replaySimulation(){
+        this.replay()
+      },
+      start(o) {
+        this.stompClient.publish({
           destination: '/app/start',
-          body: JSON.stringify({
-            machines: [
-              { id: 1, in: 0, out: 1 },
-              { id: 2, in: 1, out: 3 },
-              { id: 3, in: 1, out: 3 },
-              { id: 4, in: 0, out: 4 },
-              { id: 5, in: 3, out: 5 },
-              { id: 6, in: 4, out: 6 },
-              { id: 7, in: 5, out: 6 }
-            ],
-            queues: [{ id: 0 }, { id: 1 }, { id: 3 }, { id: 4 }, { id: 5 }, { id: 6 }]
-          })
+          body: JSON.stringify(o)
         })
       },
       stop(){
-        stompClient.publish({
+        this.stompClient.publish({
           destination: '/app/stop'
         })
       },
       replay(){
-        stompClient.publish({
+        this.stompClient.publish({
           destination: '/app/replay'
         })
       }
     },
-    // mounted(){
-    //   //this.canvas.value =
-    // }
+    mounted(){
+    }
   }
 </script>
 
@@ -109,22 +113,22 @@ import { Client } from '@stomp/stompjs'
           </div>
         </li>
         <li>
-          <div class="tool" id="clear">
+          <div class="tool" @click="clearCanvas" id="clear">
             <img width="25" height="25" src="https://img.icons8.com/ios/50/broom.png" alt="broom" />
           </div>
         </li>
         <li>
-          <div class="tool" id="start">
+          <div class="tool" @click="startSimulation" id="start">
             <img width="25" height="25" src="https://img.icons8.com/ios/50/start--v1.png" alt="start--v1"/>
           </div>
         </li>
         <li>
-          <div class="tool" id="stop">
+          <div class="tool" @click="stopSimulation" id="stop">
             <img width="25" height="25" src="https://img.icons8.com/ios/50/stop-squared.png" alt="stop-squared"/>
           </div>
         </li>
         <li>
-          <div class="tool" id="replay">
+          <div class="tool" @click="replaySimulation" id="replay">
             <img width="25" height="25" src="https://img.icons8.com/ios/50/memories.png" alt="memories"/>
           </div>
         </li>
@@ -134,7 +138,7 @@ import { Client } from '@stomp/stompjs'
       </div>
     </div>
     <div>
-      <CanvasComp :selected="selected" :machines="machines" :queues="queues" :connections="connections" ref="canvasRef" />
+      <CanvasComp :selected="selected" ref="canvasRef" />
     </div>
   </div>
 </template>

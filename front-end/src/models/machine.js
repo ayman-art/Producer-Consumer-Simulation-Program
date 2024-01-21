@@ -10,10 +10,10 @@ export default class Machine{
         this.y= y;
         this.id = id
         this.in = []
-        this.colorbg = "#ffffff"
+        this.colorbg = "#00cc00"
     }
-    draw(context, color = "#ffffff") {
-        this.colorbg = (color == "#ffffff") ? this.colorbg : color
+    draw(context, color = "#00cc00") {
+        this.colorbg = (color == "#00cc00") ? this.colorbg : color
         context.beginPath()
         context.strokeStyle = '#000000'
         context.fillStyle = this.colorbg
@@ -28,7 +28,11 @@ export default class Machine{
       }
       isSelected(x, y) {
         const dist = Math.sqrt(Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2))
-        if (dist <= this.radius) return true
+        if (dist <= 20) {
+          console.log("machine detected")
+          return true
+
+        }
         else return false
       }
 }
