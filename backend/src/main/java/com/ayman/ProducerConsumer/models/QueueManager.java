@@ -35,7 +35,8 @@ public class QueueManager {
     }
 
     public void notifyAllListeners(Product product) {
-        addProduct(product);
+        if (product != null)
+            addProduct(product);
 
         for (Machine machine : listeners) {
             if (isEmpty())

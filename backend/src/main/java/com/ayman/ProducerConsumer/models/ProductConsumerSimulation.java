@@ -22,6 +22,7 @@ public class ProductConsumerSimulation {
     }
 
     public void start() {
+        this.snapshots.clear();
         curTime = System.currentTimeMillis();
         currentState = SimulationState.START;
         inputSeed.setState(currentState);

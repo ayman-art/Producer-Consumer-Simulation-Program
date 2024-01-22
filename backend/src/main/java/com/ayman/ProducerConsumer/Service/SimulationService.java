@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.Mac;
 import java.util.*;
 
 @Service
@@ -53,25 +54,14 @@ public class SimulationService {
         for (Object obj : data) {
             Map<String, Object> mp = (Map<String, Object>) obj;
             Integer id = (Integer) mp.get("id");
-
-            List<Integer> inputQueuesIds = (List<Integer>) mp.get("in");
-            List<QueueManager> inputQueues = new ArrayList<>();
-            inputQueuesIds.forEach(
-                    inputQueueId -> inputQueues.add(queueManagerMap.get(inputQueueId))
-            );
-
-
+            List<Integer> inQueueId = (List<Integer>) mp.get("in");
             Integer outQueueId = (Integer) mp.get("out");
+
+            List<QueueManager> inQueue = getInQueues(inQueueId);
             QueueManager outQueue = queueManagerMap.get(outQueueId);
-
-            Machine machine = new Machine(id, "00CC00", outQueue, this);
-            for(QueueManager queueManager: inputQueues) {
-                queueManager.subscribe(machine);
-                machine.subscribe(queueManager);
-            }
-
-
-
+            Machine machine = new Machine(id, "00CC00", outQueue, inQueue);
+//            inQueue.subscribe(machine);
+            machineSubscribe(machine, inQueue);
 
             curMachines.add(machine);
         }
@@ -92,5 +82,19 @@ public class SimulationService {
         }
 
         return managers;
+    }
+
+    private List<QueueManager> getInQueues(List<Integer> queues) {
+        List<QueueManager> inQueues = new ArrayList<>();
+
+        for (Integer id : queues)
+            inQueues.add(queueManagerMap.get(id));
+
+        return inQueues;
+    }
+
+    private void machineSubscribe(Machine machine, List<QueueManager> queueManagers) {
+        for (QueueManager manager : queueManagers)
+            manager.subscribe(machine);
     }
 }

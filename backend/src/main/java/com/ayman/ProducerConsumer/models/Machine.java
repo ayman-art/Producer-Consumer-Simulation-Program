@@ -1,7 +1,5 @@
 package com.ayman.ProducerConsumer.models;
 
-import com.ayman.ProducerConsumer.Service.SimulationService;
-
 import java.util.*;
 
 public class Machine implements Runnable {
@@ -10,19 +8,16 @@ public class Machine implements Runnable {
     private String color;
     private boolean completed;
     private Product currentProduct;
-    private final QueueManager queueManager;
-    private List<QueueManager> inputQueues = new ArrayList<>();
-    private Thread runningThread;
+    private final QueueManager outQueueManager;
+    private final List<QueueManager> inQueueManagers;
 
-    private SimulationService simulationService;
-
-    public Machine(int id, String color, QueueManager queueManager, SimulationService simulationService) {
+    public Machine(int id, String color, QueueManager outQueueManager, List<QueueManager> inQueueManagers) {
         this.machineId = id;
         this.color = color;
-        this.queueManager = queueManager;
+        this.outQueueManager = outQueueManager;
+        this.inQueueManagers = inQueueManagers;
         this.servingTime = new Random().nextInt(500, 5000);
         this.completed = true;
-        this.simulationService = simulationService;
     }
 
     public int getMachineId() {
@@ -67,35 +62,6 @@ public class Machine implements Runnable {
         return state;
     }
 
-    public void subscribe(QueueManager queueManager) {
-        inputQueues.add(queueManager);
-    }
-
-    public void unsubscribe(QueueManager queueManager) {
-        inputQueues.remove(queueManager);
-    }
-
-    public void notifyAllListeners() {
-
-        for(QueueManager queueManager: inputQueues) {
-            synchronized (queueManager) {
-                if (queueManager.isEmpty())
-                    return;
-
-                if (this.isCompleted()) {
-                    this.setCurrentProduct(queueManager.getProduct());
-
-                }
-            }
-
-            if(!this.isCompleted())
-                this.process();
-        }
-
-        simulationService.sendSnapshot();
-
-    }
-
     public void process() {
         Thread thread = new Thread(this);
         thread.start();
@@ -103,34 +69,30 @@ public class Machine implements Runnable {
 
     @Override
     public void run() {
-
-        synchronized (queueManager) {
-            try {
-                Thread.sleep(servingTime);
-                queueManager.notifyAllListeners(currentProduct);
-                resetMachine();
-            } catch (InterruptedException e) {
-                System.out.println("Error occurred in Processing Machine");
-            }
+        try {
+            Thread.sleep(servingTime);
+//                outQueueManager.notifyAllListeners(currentProduct);
+            notifyOutListeners();
+            resetMachine();
+            notifyInListeners();
+        } catch (InterruptedException e) {
+            System.out.println("Error occurred in Processing Machine");
         }
-
-        notifyAllListeners();
     }
-//    @Override
-//    public void run() {
-//        try {
-//            Thread.sleep(servingTime);
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
-//        queueManager.notifyAllListeners(currentProduct);
-//        resetMachine();
-//    }
 
     private void resetMachine() {
         System.out.println("Finish Thread machine id: " + machineId + " prod id: " + currentProduct.getId());
         this.color = "00CC00";
         this.completed = true;
         this.currentProduct = null;
+    }
+
+    private void notifyInListeners() {
+        for (QueueManager manager : inQueueManagers)
+            manager.notifyAllListeners(null);
+    }
+
+    private void notifyOutListeners() {
+        outQueueManager.notifyAllListeners(currentProduct);
     }
 }
