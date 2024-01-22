@@ -1,8 +1,6 @@
 package com.ayman.ProducerConsumer.models;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Machine implements Runnable {
     private final int machineId;
@@ -10,13 +8,14 @@ public class Machine implements Runnable {
     private String color;
     private boolean completed;
     private Product currentProduct;
-    private final QueueManager queueManager;
-    private Thread runningThread;
+    private final QueueManager outQueueManager;
+    private final List<QueueManager> inQueueManagers;
 
-    public Machine(int id, String color, QueueManager queueManager) {
+    public Machine(int id, String color, QueueManager outQueueManager, List<QueueManager> inQueueManagers) {
         this.machineId = id;
         this.color = color;
-        this.queueManager = queueManager;
+        this.outQueueManager = outQueueManager;
+        this.inQueueManagers = inQueueManagers;
         this.servingTime = new Random().nextInt(500, 5000);
         this.completed = true;
     }
@@ -70,14 +69,14 @@ public class Machine implements Runnable {
 
     @Override
     public void run() {
-        synchronized (queueManager) {
-            try {
-                Thread.sleep(servingTime);
-                queueManager.notifyAllListeners(currentProduct);
-                resetMachine();
-            } catch (InterruptedException e) {
-                System.out.println("Error occurred in Processing Machine");
-            }
+        try {
+            Thread.sleep(servingTime);
+//                outQueueManager.notifyAllListeners(currentProduct);
+            notifyOutListeners();
+            resetMachine();
+            notifyInListeners();
+        } catch (InterruptedException e) {
+            System.out.println("Error occurred in Processing Machine");
         }
     }
 
@@ -86,5 +85,14 @@ public class Machine implements Runnable {
         this.color = "00CC00";
         this.completed = true;
         this.currentProduct = null;
+    }
+
+    private void notifyInListeners() {
+        for (QueueManager manager : inQueueManagers)
+            manager.notifyAllListeners(null);
+    }
+
+    private void notifyOutListeners() {
+        outQueueManager.notifyAllListeners(currentProduct);
     }
 }

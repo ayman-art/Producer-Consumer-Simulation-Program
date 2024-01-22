@@ -17,19 +17,17 @@ public class InputSeed extends Thread{
 
     @Override
     public void run() {
-        synchronized (queueManager) {
-            while (state == SimulationState.START) {
-                int inputRate = ThreadLocalRandom.current().nextInt(200, 3000);
-                try {
-                    Product product = new Product();
-                    queueManager.notifyAllListeners(product);
-                    this.service.sendSnapshot();
-                    Thread.sleep(inputRate);
+        while (state == SimulationState.START) {
+            int inputRate = ThreadLocalRandom.current().nextInt(200, 3000);
+            try {
+                Product product = new Product();
+                queueManager.notifyAllListeners(product);
+                this.service.sendSnapshot();
+                Thread.sleep(inputRate);
 
-                    System.out.println(product.getId());
-                } catch (InterruptedException e) {
-                    System.out.println("Error occurred in Input Seed");
-                }
+                System.out.println(product.getId());
+            } catch (InterruptedException e) {
+                System.out.println("Error occurred in Input Seed");
             }
         }
     }
