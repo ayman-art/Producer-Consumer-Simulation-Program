@@ -6,10 +6,12 @@ public class Machine implements Runnable {
     private final int machineId;
     private final int servingTime;
     private String color;
-    private boolean completed;
+    private MachineState machineState;
     private Product currentProduct;
     private final QueueManager outQueueManager;
     private final List<QueueManager> inQueueManagers;
+    private int parts;
+    private final int maxParts;
 
     public Machine(int id, String color, QueueManager outQueueManager, List<QueueManager> inQueueManagers) {
         this.machineId = id;
@@ -17,7 +19,9 @@ public class Machine implements Runnable {
         this.outQueueManager = outQueueManager;
         this.inQueueManagers = inQueueManagers;
         this.servingTime = new Random().nextInt(500, 5000);
-        this.completed = true;
+        this.machineState = MachineState.READY;
+        this.parts = 0;
+        this.maxParts = inQueueManagers.size();
     }
 
     public int getMachineId() {
@@ -32,22 +36,23 @@ public class Machine implements Runnable {
         return servingTime;
     }
 
-    public boolean isCompleted() {
-        return completed;
+    public MachineState getMachineState() {
+        return machineState;
     }
 
     public Product getCurrentProduct() {
         return currentProduct;
     }
 
-    public void setState(boolean completed) {
-        this.completed = completed;
+    public void setState(MachineState machineState) {
+        this.machineState = machineState;
     }
 
     public void setCurrentProduct(Product currentProduct) {
         this.currentProduct = currentProduct;
         this.color = this.currentProduct.getColor();
-        setState(false);
+        this.parts++;
+        setState(MachineState.WAITING);
     }
 
     public void setColor(String color) {
@@ -63,13 +68,16 @@ public class Machine implements Runnable {
     }
 
     public void process() {
-        Thread thread = new Thread(this);
-        thread.start();
+        if (machineCompleted()) {
+            Thread thread = new Thread(this);
+            thread.start();
+        }
     }
 
     @Override
     public void run() {
         try {
+            setState(MachineState.BUSY);
             Thread.sleep(servingTime);
 //                outQueueManager.notifyAllListeners(currentProduct);
             notifyOutListeners();
@@ -83,8 +91,9 @@ public class Machine implements Runnable {
     private void resetMachine() {
         System.out.println("Finish Thread machine id: " + machineId + " prod id: " + currentProduct.getId());
         this.color = "00CC00";
-        this.completed = true;
+        this.machineState = MachineState.READY;
         this.currentProduct = null;
+        this.parts = 0;
     }
 
     private void notifyInListeners() {
@@ -94,5 +103,9 @@ public class Machine implements Runnable {
 
     private void notifyOutListeners() {
         outQueueManager.notifyAllListeners(currentProduct);
+    }
+
+    private boolean machineCompleted() {
+        return this.parts == this.maxParts;
     }
 }

@@ -1,7 +1,6 @@
 package com.ayman.ProducerConsumer.models;
 
 import com.ayman.ProducerConsumer.Service.SimulationService;
-import org.w3c.dom.ls.LSResourceResolver;
 
 import java.util.*;
 
@@ -42,7 +41,7 @@ public class QueueManager {
             if (isEmpty())
                 return;
 
-            if (machine.isCompleted()) {
+            if (machine.getMachineState()) {
                 machine.setCurrentProduct(getProduct());
                 try {
                     machine.process();
