@@ -76,20 +76,22 @@ public class Machine implements Runnable {
 
     @Override
     public void run() {
-        try {
-            setState(MachineState.BUSY);
-            Thread.sleep(servingTime);
+        synchronized (this) {
+            try {
+                setState(MachineState.BUSY);
+                Thread.sleep(servingTime);
 //                outQueueManager.notifyAllListeners(currentProduct);
-            notifyOutListeners();
-            resetMachine();
-            notifyInListeners();
-        } catch (InterruptedException e) {
-            System.out.println("Error occurred in Processing Machine");
+                notifyOutListeners();
+                resetMachine();
+                notifyInListeners();
+            } catch (InterruptedException e) {
+                System.out.println("Error occurred in Processing Machine");
+            }
         }
     }
 
     private void resetMachine() {
-        System.out.println("Finish Thread machine id: " + machineId + " prod id: " + currentProduct.getId());
+//        System.out.println("Finish Thread machine id: " + machineId + " prod id: " + currentProduct.getId());
         this.color = "00CC00";
         this.machineState = MachineState.READY;
         this.currentProduct = null;
@@ -106,6 +108,9 @@ public class Machine implements Runnable {
     }
 
     private boolean machineCompleted() {
-        return this.parts == this.maxParts;
+        if (getMachineId() == 2) {
+            System.out.println("parts: " + this.parts + " maxParts: " + maxParts);
+        }
+        return true;
     }
 }

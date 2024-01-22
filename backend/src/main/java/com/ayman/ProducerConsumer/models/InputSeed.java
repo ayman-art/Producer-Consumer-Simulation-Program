@@ -25,7 +25,7 @@ public class InputSeed extends Thread{
                 this.service.sendSnapshot();
                 Thread.sleep(inputRate);
 
-                System.out.println(product.getId());
+//                System.out.println(product.getId());
             } catch (InterruptedException e) {
                 System.out.println("Error occurred in Input Seed");
             }

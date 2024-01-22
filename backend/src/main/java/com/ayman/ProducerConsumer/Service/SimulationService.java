@@ -76,7 +76,7 @@ public class SimulationService {
             Map<String, Integer> mp = (Map<String, Integer>) queue;
             Integer id = mp.get("id");
 
-            var manager = new QueueManager(mp.get("id"), new LinkedList<>(), new ArrayList<>(), this);
+            var manager = new QueueManager(mp.get("id"), this);
             managers.add(manager);
             queueManagerMap.put(id, manager);
         }

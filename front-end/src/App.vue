@@ -97,6 +97,7 @@ export default {
       this.replay();
     },
     start(o) {
+      console.log(o);
       this.stompClient.publish({
         destination: "/app/start",
         body: JSON.stringify(o),
