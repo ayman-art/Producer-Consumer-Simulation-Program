@@ -32,7 +32,6 @@ export default {
   },
   methods: {
     getSelectedShape(startx, starty) {
-      // console.log(startx, starty);
       for (let i = 0; i < this.machines.length; i++) {
         if (this.machines[i].isSelected(startx, starty)) {
           this.selectedShape = this.machines[i];
@@ -42,7 +41,6 @@ export default {
       }
       for (let i = 0; i < this.queues.length; i++) {
         if (this.queues[i].isSelected(startx, starty)) {
-          // console.log("here", this.queues[i].x, this.queues[i].y);
           this.selectedShape = this.queues[i];
           this.MorQ = 2;
           return;
@@ -65,21 +63,12 @@ export default {
         this.endx = e.x - 10;
         this.endy = e.y - 70;
         if (this.selected == "connection") {
-          // console.log("reached1", this.MorQ);
           if (this.MorQ == 1) {
-            // console.log("reached2");
-
             let machine = this.selectedShape;
-
             this.getSelectedShape(this.endx, this.endy);
-            // console.log(this.MorQ);
             if (this.MorQ == 2) {
-              // console.log("reached3");
-
               let queue = this.selectedShape;
               if (machine.out == null) {
-                // console.log("reached1");
-
                 machine.out = queue;
                 queue.in.push(machine);
                 let arrow = new Arrow(machine.x, machine.y, queue.x, queue.y);
@@ -110,13 +99,11 @@ export default {
       this.MorQ = 0;
       this.selectedShape = null;
       this.drawElements();
+      this.machineIdCount = 0
+      this.queueIdCount = 0;
     },
     drawElements() {
       this.ctx.clearRect(0, 0, this.width, this.height);
-      // console.log(this.connections);
-      // console.log(this.machines);
-      // console.log(this.queues);
-
       for (let i = 0; i < this.connections.length; i++) {
         this.connections[i].draw(this.ctx);
       }
