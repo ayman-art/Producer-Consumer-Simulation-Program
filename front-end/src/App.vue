@@ -1,105 +1,144 @@
 <script>
-import CanvasComp from './components/CanvasComp.vue'
-import { ref } from 'vue'
-import { Client } from '@stomp/stompjs'
-  export default {
-    data(){
-      return {
-        port : 8080,
-        selected: ref("none"),
-        selectedShape: ref(null),
-        snapshots : ref([]),
-        canvas : ref(null)
-      }
-    },
-    setup() {
-      const stompClient = new Client({
-        brokerURL: 'ws://localhost:8080/ws'
-      })
-      let snapshots = ref([])
-      stompClient.onConnect = (frame) => {
-        console.log('Connected: ' + frame)
-        stompClient.subscribe('/simulate/public', (e) => {
-          console.log(e.body)
-          this.$refs.canvasRef.updateSystem(e.body)
-        })
-      }
+import CanvasComp from "./components/CanvasComp.vue";
+import { ref } from "vue";
+import { Client } from "@stomp/stompjs";
+export default {
+  data() {
+    return {
+      port: 8080,
+      selected: ref("none"),
+      selectedShape: ref(null),
+      snapshots: ref([]),
+      canvas: ref(null),
+      stompClient: null,
+      snapshots: null,
+    };
+  },
+  created() {
+    this.stompClient = new Client({
+      brokerURL: "ws://localhost:8080/ws",
+    });
+    this.snapshots = ref([]);
 
-      stompClient.onWebSocketError = (error) => {
-        console.error('Error with websocket', error)
-      }
-
-      stompClient.onStompError = (frame) => {
-        console.error('Broker reported error: ' + frame.headers['message'])
-        console.error('Additional details: ' + frame.body)
-      }
-
-      const connect = () => {
-        stompClient.activate()
-      }
-      connect()
-      return {stompClient, snapshots}
-    },
-    components:{
-      CanvasComp
-    },
-    methods:{
-      clearCanvas(){
-        this.$refs.canvasRef.clear()
-      },
-      startSimulation(){
-        let outputObject = this.$refs.canvasRef.formatSystem()
-        if(outputObject == null) {
-          alert("Please submit a valid system")
-        }else{
-          console.log(outputObject)
-          this.start(outputObject)
+    this.stompClient.onConnect = (frame) => {
+      console.log("Connected: " + frame);
+      this.stompClient.subscribe("/simulate/public", (e) => {
+        console.log(e.body);
+        if (this.$refs.canvasRef == null) {
+          console.log("============== NULL =================");
         }
-      },
-      stopSimulation(){
-        this.stop()
-      },
-      replaySimulation(){
-        this.replay()
-      },
-      start(o) {
-        this.stompClient.publish({
-          destination: '/app/start',
-          body: JSON.stringify(o)
-        })
-      },
-      stop(){
-        this.stompClient.publish({
-          destination: '/app/stop'
-        })
-      },
-      replay(){
-        this.stompClient.publish({
-          destination: '/app/replay'
-        })
+        this.$refs.canvasRef.updateSystem(JSON.parse(e.body));
+      });
+    };
+
+    this.stompClient.onWebSocketError = (error) => {
+      console.error("Error with websocket", error);
+    };
+
+    this.stompClient.onStompError = (frame) => {
+      console.error("Broker reported error: " + frame.headers["message"]);
+      console.error("Additional details: " + frame.body);
+    };
+
+    // const connect = () => {
+    //   stompClient.activate();
+    // };
+    // connect();
+    this.stompClient.activate();
+  },
+  // setup() {
+  //   const stompClient = new Client({
+  //     brokerURL: "ws://localhost:8080/ws",
+  //   });
+  //   let snapshots = ref([]);
+  //   stompClient.onConnect = (frame) => {
+  //     console.log("Connected: " + frame);
+  //     stompClient.subscribe("/simulate/public", (e) => {
+  //       console.log(e.body);
+  //       this.$refs.canvasRef.updateSystem(e.body);
+  //     });
+  //   };
+
+  //   stompClient.onWebSocketError = (error) => {
+  //     console.error("Error with websocket", error);
+  //   };
+
+  //   stompClient.onStompError = (frame) => {
+  //     console.error("Broker reported error: " + frame.headers["message"]);
+  //     console.error("Additional details: " + frame.body);
+  //   };
+
+  //   const connect = () => {
+  //     stompClient.activate();
+  //   };
+  //   connect();
+  //   return { stompClient, snapshots };
+  // },
+  components: {
+    CanvasComp,
+  },
+  methods: {
+    clearCanvas() {
+      this.$refs.canvasRef.clear();
+    },
+    startSimulation() {
+      let outputObject = this.$refs.canvasRef.formatSystem();
+      if (outputObject == null) {
+        alert("Please submit a valid system");
+      } else {
+        console.log(outputObject);
+        this.start(outputObject);
       }
     },
-    mounted(){
-    }
-  }
+    stopSimulation() {
+      this.stop();
+    },
+    replaySimulation() {
+      this.replay();
+    },
+    start(o) {
+      this.stompClient.publish({
+        destination: "/app/start",
+        body: JSON.stringify(o),
+      });
+    },
+    stop() {
+      this.stompClient.publish({
+        destination: "/app/stop",
+      });
+    },
+    replay() {
+      this.stompClient.publish({
+        destination: "/app/replay",
+      });
+    },
+  },
+  mounted() {},
+};
 </script>
-
 
 <template>
   <div id="container">
-    
     <div id="toolbox">
       <div id="tool-container">
         <li>
           <div class="tool" @click="selected = 'connection'">
-            <img width="25" height="25" src="https://img.icons8.com/ios/50/up-right-arrow.png" alt="up-right-arrow"/>
+            <img
+              width="25"
+              height="25"
+              src="https://img.icons8.com/ios/50/up-right-arrow.png"
+              alt="up-right-arrow"
+            />
           </div>
         </li>
         <li>
           <div class="tool" @click="selected = 'machine'">
-            <img width="25" 
-            height="25" 
-            src="https://img.icons8.com/ios/50/circled-m.png" alt="circled-m"/>
+            <img
+              width="25"
+              height="25"
+              src="https://img.icons8.com/ios/50/circled-m.png"
+              alt="circled-m"
+            />
           </div>
         </li>
         <li>
@@ -114,22 +153,42 @@ import { Client } from '@stomp/stompjs'
         </li>
         <li>
           <div class="tool" @click="clearCanvas" id="clear">
-            <img width="25" height="25" src="https://img.icons8.com/ios/50/broom.png" alt="broom" />
+            <img
+              width="25"
+              height="25"
+              src="https://img.icons8.com/ios/50/broom.png"
+              alt="broom"
+            />
           </div>
         </li>
         <li>
           <div class="tool" @click="startSimulation" id="start">
-            <img width="25" height="25" src="https://img.icons8.com/ios/50/start--v1.png" alt="start--v1"/>
+            <img
+              width="25"
+              height="25"
+              src="https://img.icons8.com/ios/50/start--v1.png"
+              alt="start--v1"
+            />
           </div>
         </li>
         <li>
           <div class="tool" @click="stopSimulation" id="stop">
-            <img width="25" height="25" src="https://img.icons8.com/ios/50/stop-squared.png" alt="stop-squared"/>
+            <img
+              width="25"
+              height="25"
+              src="https://img.icons8.com/ios/50/stop-squared.png"
+              alt="stop-squared"
+            />
           </div>
         </li>
         <li>
           <div class="tool" @click="replaySimulation" id="replay">
-            <img width="25" height="25" src="https://img.icons8.com/ios/50/memories.png" alt="memories"/>
+            <img
+              width="25"
+              height="25"
+              src="https://img.icons8.com/ios/50/memories.png"
+              alt="memories"
+            />
           </div>
         </li>
       </div>
@@ -142,7 +201,6 @@ import { Client } from '@stomp/stompjs'
     </div>
   </div>
 </template>
-
 
 <style scoped>
 #toolbox {
