@@ -78,6 +78,8 @@ public class Machine implements Runnable {
     public void run() {
         synchronized (this) {
             try {
+                if(currentProduct == null)
+                    return;
                 setState(MachineState.BUSY);
                 Thread.sleep(servingTime);
 //                outQueueManager.notifyAllListeners(currentProduct);
